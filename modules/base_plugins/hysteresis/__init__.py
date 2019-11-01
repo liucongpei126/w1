@@ -22,17 +22,38 @@ class Hysteresis(KettleController):
 
 
 
-
     def run(self):
         '''
         Each controller is exectuted in its own thread. The run method is the entry point
-        :return: 
+        :return:
         '''
+
+        count =0
+        status = 0
+        pre_status = 0
         while self.is_running():
 
             if self.get_temp() < self.get_target_temp() - float(self.on):
                 self.heater_on(100)
+                status = 1
             elif self.get_temp() >= self.get_target_temp() - float(self.off):
                 self.heater_off()
-            self.sleep(1)
+                status = 0
 
+            if count > 15 or pre_status != status :
+                try:
+                    with sqlite3.connect("sensor_log.db") as conn:
+                        c = conn.cursor()
+                        count = 0
+                        pre_status = status
+                        sql = "insert into tbksensor_log(nTime,nKettleID,nStatus,nCur_Tem,nTarget_Tem) values(time(),self.kettle_id,%d,%.2f,%.2f)"%(status,self.get_temp(),self.get_target_temp())
+                        c.execute(sql)
+                        conn.commit()
+                        conn.close()
+
+                except sqlite3.OperationalError as err:
+                    print "EXCEPT"
+                    print err
+
+            self.sleep(1)
+            count = count + 1
