@@ -95,7 +95,7 @@ class LogView(FlaskView):
 
     @route('/<t>/<int:id>', methods=["POST"])
     def get_logs_as_json(self, t, id):
-        print "get logs as json %s %s"%(t,id)
+        #print "get logs as json %s %s"%(t,id)
         data = request.json
         result = []
         if t == "s":
@@ -114,7 +114,7 @@ class LogView(FlaskView):
             result = self.get_kettle_action_log(id)
             #kettle = cbpi.cache.get("kettle").get(id)
             #result = map(self.convert_chart_data_to_json, cbpi.get_controller(kettle.logic).get("class").chart(kettle))
-            print result
+            #print result
         return json.dumps(result)
 
     @route('/download/<file>')

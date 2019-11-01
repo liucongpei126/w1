@@ -48,7 +48,7 @@ class Hysteresis(KettleController):
                         c = conn.cursor()
                         pre_status = status
                         sql = "insert into tbksensor_log(nTime,nKettleID,nStatus,nCur_Tem,nTarget_Tem) values(datetime('now','localtime'),%d,%d,%.2f,%.2f)"%(self.kettle_id,status,self.get_temp(),self.get_target_temp())
-                        print sql
+                        #print sql
                         c.execute(sql)
 
                         if 0==count%(15*128):
