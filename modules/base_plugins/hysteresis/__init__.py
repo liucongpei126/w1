@@ -1,3 +1,5 @@
+import sqlite3
+
 from modules import cbpi
 from modules.core.controller import KettleController
 from modules.core.props import Property
@@ -52,9 +54,8 @@ class Hysteresis(KettleController):
                         conn.commit()
                         conn.close()
 
-                except sqlite3.OperationalError as err:
-                    print "EXCEPT"
-                    print err
+                except :
+                    pass
 
             self.sleep(1)
             count = count + 1

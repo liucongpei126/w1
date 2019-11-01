@@ -7,7 +7,6 @@ from db import get_db
 def execute_file(db_name,data_path,curernt_version, data):
     if curernt_version >= data["version"]:
         cbpi.app.logger.info("SKIP DB FILE: %s" % data["file"])
-        print data["version"]
         return
     try:
         with sqlite3.connect(db_name) as conn:
