@@ -45,6 +45,7 @@ def init(app=None):
                 result.append(d)
                 execute_file("craftbeerpi.db","./update",current_version, d)
 
+'''
     with sqlite3.connect("sensor_log.db") as conn:
         cur = conn.cursor()
         current_version = None
@@ -61,6 +62,7 @@ def init(app=None):
                 d = {"version": int(filename[:filename.index('_')]), "file": filename}
                 result.append(d)
                 execute_file("sensor_log.db","./update_log",current_version, d)
+'''
 
 '''
 def execute_file(curernt_version, data):
