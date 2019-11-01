@@ -70,7 +70,7 @@ class LogView(FlaskView):
         return {"name": chart_data["name"], "data": self.read_log_as_json(chart_data["data_type"], chart_data["data_id"])}
 
     def get_kettle_action_log(self, kid):
-        sql = "select strftime('%s',nTime) as nTime,nTarget_Tem,nCur_Tem,nStatus from tbksensor_log where nKettleID={k_id};".format(k_id=kid)
+        sql = "select nTime,nTarget_Tem,nCur_Tem,nStatus from tbksensor_log where nKettleID={k_id};".format(k_id=kid)
         print sql
         conn = sqlite3.connect("sensor_log.db")
         cursor = conn.execute(sql)
@@ -78,9 +78,9 @@ class LogView(FlaskView):
         array2 = []
         array3 = []
         for row in cursor:
-            array1.append([int(row[0]), float(row[1])])
-            array2.append([int(row[0]), float(row[2])])
-            array3.append([int(row[0]), float(row[3])])
+            array1.append([int((datetime.datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S") - datetime.datetime(1970, 1, 1)).total_seconds()) * 1000, float(row[1])])
+            array2.append([int((datetime.datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S") - datetime.datetime(1970, 1, 1)).total_seconds()) * 1000, float(row[2])])
+            array3.append([int((datetime.datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S") - datetime.datetime(1970, 1, 1)).total_seconds()) * 1000, float(row[3])])
 
         conn.close()
         a1 = {"name": "Target Temp", "data":array1}
