@@ -48,7 +48,6 @@ def init(app=None):
 
         conn = sqlite3.connect("sensor_log.db")
         cur = conn.cursor()
-        current_version = []
         try:
             cur.execute("SELECT max(version) as m FROM schema_info")
             m = cur.fetchone()
