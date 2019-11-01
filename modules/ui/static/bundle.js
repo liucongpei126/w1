@@ -11844,6 +11844,12 @@ function(e, t, n) {
                     }
                 },
                 {
+                    label: "Action Chart",
+                    action: function() {
+                        e.context.router.history.push("/app/chart/k/" + n.id)
+                    }
+                },
+                {
                     label: "Set Target Temperature",
                     action: function() {
                         e.refs.target_temp.wrappedInstance.show({
