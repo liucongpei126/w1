@@ -11846,7 +11846,7 @@ function(e, t, n) {
                 {
                     label: "Action Chart",
                     action: function() {
-                        e.context.router.history.push("/app/chart/k/" + n.id)
+                        e.context.router.history.push("/app/chart/act_sensor/" + n.id)
                     }
                 },
                 {

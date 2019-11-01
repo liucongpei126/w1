@@ -84,6 +84,9 @@ class LogView(FlaskView):
             fermenter = cbpi.cache.get("fermenter").get(id)
             result = map(self.convert_chart_data_to_json, cbpi.get_fermentation_controller(fermenter.logic).get("class").chart(fermenter))
 
+        if t=="act_sensor":
+            kettle = cbpi.cache.get("kettle").get(id)
+            result = map(self.convert_chart_data_to_json, cbpi.get_controller(kettle.logic).get("class").chart(kettle))
         return json.dumps(result)
 
     @route('/download/<file>')
