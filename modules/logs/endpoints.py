@@ -88,6 +88,7 @@ class LogView(FlaskView):
         if t=="act_sensor":
             kettle = cbpi.cache.get("kettle").get(id)
             result = map(self.convert_chart_data_to_json, cbpi.get_controller(kettle.logic).get("class").chart(kettle))
+            print result
         return json.dumps(result)
 
     @route('/download/<file>')
