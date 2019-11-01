@@ -70,7 +70,7 @@ class LogView(FlaskView):
         return {"name": chart_data["name"], "data": self.read_log_as_json(chart_data["data_type"], chart_data["data_id"])}
 
     def get_kettle_action_log(self, kid):
-        sql = "select strftime('%s',nTime) as nTime,nTarget_Tem,nCur_Tem,nStatus from tbksensor_log where nKettleID=%s;"%(kid)
+        sql = "select strftime('now',nTime) as nTime,nTarget_Tem,nCur_Tem,nStatus from tbksensor_log where nKettleID=%s;"%(kid)
         conn = sqlite3.connect("sensor_log.db")
         cursor = conn.execute(sql)
         array1 = []
