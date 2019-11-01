@@ -45,12 +45,12 @@ def init(app=None):
                 result.append(d)
                 execute_file("craftbeerpi.db","./update",current_version, d)
 
-        conn2 = sqlite3.connect("sensor_log.db")
-        cur2 = conn2.cursor()
+        conn = sqlite3.connect("sensor_log.db")
+        cur = conn.cursor()
         current_version2 = None
         try:
-            cur2.execute("SELECT max(version) as m FROM schema_info")
-            m = cur2.fetchone()
+            cur.execute("SELECT max(version) as m FROM schema_info")
+            m = cur.fetchone()
             current_version2 = m["m"]
         except:
             pass
