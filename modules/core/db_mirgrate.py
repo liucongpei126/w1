@@ -55,11 +55,11 @@ def init(app=None):
             current_version2 = m["m"]
         except:
             pass
-        result2 = []
+        #result2 = []
         for filename in os.listdir("./update_log"):
             if filename.endswith(".sql"):
                 d = {"version": int(filename[:filename.index('_')]), "file": filename}
-                result2.append(d)
+                #result2.append(d)
                 execute_file("sensor_log.db", "./update_log", current_version2, d)
 
 '''
