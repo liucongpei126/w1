@@ -7,6 +7,7 @@ from db import get_db
 def execute_file(db_name,data_path,curernt_version, data):
     if curernt_version >= data["version"]:
         cbpi.app.logger.info("SKIP DB FILE: %s" % data["file"])
+        print data["version"]
         return
     try:
         with sqlite3.connect(db_name) as conn:
@@ -46,20 +47,20 @@ def init(app=None):
                 execute_file("craftbeerpi.db","./update",current_version, d)
 
 
-        conn = sqlite3.connect("sensor_log.db")
-        cur = conn.cursor()
+        conn2 = sqlite3.connect("sensor_log.db")
+        cur2 = conn2.cursor()
         current_version2 = None
         try:
-            cur.execute("SELECT max(version) as m FROM schema_info")
-            m = cur.fetchone()
+            cur2.execute("SELECT max(version) as m FROM schema_info")
+            m = cur2.fetchone()
             current_version2 = m["m"]
         except:
             pass
-        #result2 = []
+        result2 = []
         for filename in os.listdir("./update_log"):
             if filename.endswith(".sql"):
                 d = {"version": int(filename[:filename.index('_')]), "file": filename}
-                #result2.append(d)
+                result2.append(d)
                 execute_file("sensor_log.db", "./update_log", current_version2, d)
 
 '''
