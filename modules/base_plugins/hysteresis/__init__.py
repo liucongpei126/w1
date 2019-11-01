@@ -47,12 +47,12 @@ class Hysteresis(KettleController):
                     with sqlite3.connect("sensor_log.db") as conn:
                         c = conn.cursor()
                         pre_status = status
-                        sql = "insert into tbksensor_log(nTime,nKettleID,nStatus,nCur_Tem,nTarget_Tem) values(datetime('now'),%d,%d,%.2f,%.2f)"%(self.kettle_id,status,self.get_temp(),self.get_target_temp())
+                        sql = "insert into tbksensor_log(nTime,nKettleID,nStatus,nCur_Tem,nTarget_Tem) values(datetime('now','localtime'),%d,%d,%.2f,%.2f)"%(self.kettle_id,status,self.get_temp(),self.get_target_temp())
                         print sql
                         c.execute(sql)
 
                         if 0==count%(15*128):
-                            sql = "delete from tbksensor_log where nTime < datetime('now','start of day','-8 day');"
+                            sql = "delete from tbksensor_log where nTime < datetime('now','localtime','start of day','-8 day');"
                             c.execute(sql)
                         conn.commit()
                         conn.close()
