@@ -71,7 +71,7 @@ class LogView(FlaskView):
 
     def get_kettle_action_log(self, kid):
         sql = "select nTime,nTarget_Tem,nCur_Tem,nStatus from tbksensor_log where nKettleID={k_id};".format(k_id=kid)
-        print sql
+        #print sql
         conn = sqlite3.connect("sensor_log.db")
         cursor = conn.execute(sql)
         array1 = []
@@ -114,7 +114,7 @@ class LogView(FlaskView):
             result = self.get_kettle_action_log(id)
             #kettle = cbpi.cache.get("kettle").get(id)
             #result = map(self.convert_chart_data_to_json, cbpi.get_controller(kettle.logic).get("class").chart(kettle))
-            print result
+            #print result
         return json.dumps(result)
 
     @route('/download/<file>')
