@@ -70,6 +70,7 @@ class LogView(FlaskView):
 
     @route('/<t>/<int:id>', methods=["POST"])
     def get_logs_as_json(self, t, id):
+        print "get logs as json %s %s"%(t,id)
         data = request.json
         result = []
         if t == "s":
