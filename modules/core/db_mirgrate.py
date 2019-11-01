@@ -48,10 +48,11 @@ def init(app=None):
 
         conn = sqlite3.connect("sensor_log.db")
         cur = conn.cursor()
+        current_version2 = None
         try:
             cur.execute("SELECT max(version) as m FROM schema_info")
             m = cur.fetchone()
-            current_version = m["m"]
+            current_version2 = m["m"]
         except:
             pass
         result2 = []
@@ -59,7 +60,7 @@ def init(app=None):
             if filename.endswith(".sql"):
                 d = {"version": int(filename[:filename.index('_')]), "file": filename}
                 result2.append(d)
-                execute_file("sensor_log.db", "./update_log", current_version, d)
+                execute_file("sensor_log.db", "./update_log", current_version2, d)
 
 '''
     with sqlite3.connect("sensor_log.db") as conn:
