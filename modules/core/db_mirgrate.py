@@ -45,6 +45,22 @@ def init(app=None):
                 result.append(d)
                 execute_file("craftbeerpi.db","./update",current_version, d)
 
+        conn2 = sqlite3.connect("sensor_log.db")
+        cur2 = conn2.cursor()
+        current_version2 = None
+        try:
+            cur2.execute("SELECT max(version) as m FROM schema_info")
+            m = cur2.fetchone()
+            current_version2 = m["m"]
+        except:
+            pass
+        result2 = []
+        for filename in os.listdir("./update_log"):
+            if filename.endswith(".sql"):
+                d = {"version": int(filename[:filename.index('_')]), "file": filename}
+                result2.append(d)
+                execute_file("sensor_log.db", "./update_log", current_version2, d)
+
 '''
     with sqlite3.connect("sensor_log.db") as conn:
         cur = conn.cursor()
