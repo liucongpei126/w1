@@ -135,8 +135,24 @@ class FermenterController(ControllerBase, ActorController, SensorController):
             id = self.fermenter_id
         return self.api.cache.get("fermenter").get(id).target_temp
 
+
+    @cbpi.try_catch(None)
+    def get_start_temp(self, id=None):
+        print "get_start_temp " + self.__class__.__name__ + "id " + id
+        if id is None:
+            id = self.fermenter_id
+        return self.api.cache.get("fermenter").get(id).start_temp
+
+    @cbpi.try_catch(None)
+    def get_stop_temp(self, id=None):
+        if id is None:
+            id = self.fermenter_id
+        return self.api.cache.get("fermenter").get(id).stop_temp
+
+
     @cbpi.try_catch(None)
     def heater_on(self, power=100):
+        print "self class name " + self.__class__.__name__ + "id " + self.fermenter_id
         f = self.api.cache.get("fermenter").get(self.fermenter_id)
         if f.heater is not None:
             self.actor_on(power, int(f.heater))
@@ -166,3 +182,9 @@ class FermenterController(ControllerBase, ActorController, SensorController):
             id = self.fermenter_id
         return self.get_sensor_value(int(self.api.cache.get("fermenter").get(id).sensor))
 
+    @cbpi.try_catch(None)
+    def get_temp2(self, id=None):
+
+        if id is None:
+            id = self.fermenter_id
+        return self.get_sensor_value(int(self.api.cache.get("fermenter").get(id).sensor2))

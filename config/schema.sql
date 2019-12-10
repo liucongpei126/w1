@@ -44,6 +44,8 @@ CREATE TABLE IF NOT EXISTS fermenter_step
     minutes INTEGER,
     days INTEGER,
     temp INTEGER,
+    start_temp INTEGER,
+    stop_temp INTEGER,
     direction VARCHAR(1),
     "order" INTEGER,
     state VARCHAR(1),

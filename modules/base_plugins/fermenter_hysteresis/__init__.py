@@ -18,16 +18,31 @@ class Hysteresis(FermenterController):
         self.cooler_off()
 
     def run(self):
+        print "running......"
         while self.is_running():
-
+            print "running...... " + self.__class__.__name__
             target_temp = self.get_target_temp()
+            start_temp = self.get_start_temp()
+            stop_temp = self.get_stop_temp()
             temp = self.get_temp()
+            temp2 = self.get_temp2()
 
-            if temp + float(self.heater_offset_min) <= target_temp:
+            print "temp2..... " + str(temp2)
+            flag = 0
+            if start_temp is not None and temp2 is not None:
+                if temp2 <= start_temp:
+                    flag = 1
+            else :
+                flag = 1
+
+            if flag == 1 and temp + float(self.heater_offset_min) <= target_temp:
                 self.heater_on(100)
 
             if temp + float(self.heater_offset_max) >= target_temp:
                 self.heater_off()
+            elif stop_temp is not None and temp2 is not None and stop_temp >= temp2:
+                self.heater_off()
+
 
             if temp >= target_temp + float(self.cooler_offset_min):
                 self.cooler_on(100)

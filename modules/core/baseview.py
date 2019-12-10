@@ -50,6 +50,11 @@ class BaseView(FlaskView):
         pass
 
 
+    @route('/hello', methods=["GET"])
+    def hello(self):
+        return '<h1> Hellow Lcp</h1>'
+
+
     @route('/<int:id>', methods=["PUT"])
     def put(self, id):
         data = request.json
@@ -87,6 +92,8 @@ class BaseView(FlaskView):
         def _post_delete_callback(self, id):
             pass
         return ('',204)
+
+
 
     @classmethod
     def post_init_callback(cls, obj):

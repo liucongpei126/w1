@@ -1,7 +1,11 @@
 import yaml
+from flask import Flask
 from flask import json, url_for, Response
 from flask_classy import FlaskView, route
 from git import Repo, Git
+from flask import render_template
+import commands
+from modules.ui.endpoints import react
 
 from modules.app_config import cbpi
 
@@ -90,6 +94,33 @@ class SystemView(FlaskView):
 
         return json.dumps(changes)
 
+
+    def get_mage(self):
+	commands.getoutput("fswebcam -d /dev/video1 --no-banner -r 640x480 image4.jpg")
+	f = None
+	frame = None
+	try:
+	    f = open("image4.jpg",'r')
+	    frame = f.read()
+	    assert "f.read()"
+	finally:
+	    if f:
+		f.close()
+	return (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+    @route('/webcam/frame',methods=['GET'])
+    def webcam_frame(self):
+	assert "webcam frame"
+	mframe = self.get_mage()
+	return Response(mframe,mimetype='multipart/x-mixed-replace; boundary=frame')
+
+    @route('/webcam', methods=['GET'])
+    def webcam(self):
+#        return '<h1> Hellow hahha 222</h1>'
+#	return render_template('fswebcam.html')
+	return react.send_static_file("fswebcam.html")
+
     @route('/git/pull', methods=['POST'])
     def update(self):
         repo = Repo('./')
@@ -136,6 +167,9 @@ class SystemView(FlaskView):
         pprint.pprint(re)
         return Response(yaml.dump(re), mimetype='text/yaml')
 
+    @route('/hello', methods=["GET"])
+    def hello(self):
+        return '<h1> Hellow Lcp 222</h1>'
 
 
 @cbpi.initalizer()
