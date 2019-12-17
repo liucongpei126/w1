@@ -145,7 +145,7 @@ class StepView(BaseView):
     @route('/next', methods=['POST'])
     @route('/start', methods=['POST'])
     def start(self):
-        print "steps...."
+        #print "steps...."
         active = Step.get_by_state("A")
         inactive = Step.get_by_state('I')
 

@@ -10,6 +10,7 @@ class Fermenter(DBModel):
     __fields__ = ["name", "brewname", "sensor", "sensor2", "sensor3", "heater", "cooler",  "logic",  "config",  "target_temp"]
     __table_name__ = "fermenter"
     __json_fields__ = ["config"]
+    shake = None
 
 class FermenterStep(DBModel):
     __fields__ = ["name", "days", "hours", "minutes", "temp", "start_temp", "stop_temp", "direction", "order", "state", "start", "end", "timer_start", "fermenter_id"]
@@ -85,7 +86,7 @@ class FermenterView(BaseView):
             return ('', 500)
         id = int(id)
         temp = float(temp)
-        print "temp %s   %s" %(start_temp,stop_temp)
+        #print "temp %s   %s" %(start_temp,stop_temp)
         cbpi.cache.get(self.cache_key)[id].target_temp = float(temp)
         if start_temp is None or start_temp == '':
             cbpi.cache.get(self.cache_key)[id].start_temp = None
@@ -129,7 +130,7 @@ class FermenterView(BaseView):
     @route('/<int:id>/step', methods=['POST'])
     def postStep(self, id):
         data = request.json
-        print "postStep %s" %(data)
+        #print "postStep %s" %(data)
         order_max = FermenterStep.get_max_order(id)
         order = order_max + 1 if order_max is not None else 1
         data["order"] = order
@@ -151,7 +152,7 @@ class FermenterView(BaseView):
 
     @route('/<int:id>/step/<int:stepid>', methods=["PUT"])
     def putStep(self, id, stepid):
-        print "putStep...."
+        #print "putStep...."
         data = request.json
         # Select modal
 
@@ -184,7 +185,7 @@ class FermenterView(BaseView):
 
     @route('/<int:id>/start', methods=['POST'])
     def start_fermentation(self, id):
-        print "start_fermentation"
+        #print "start_fermentation"
         active = None
         for idx, s in enumerate(cbpi.cache.get(self.cache_key)[id].steps):
             if s.state == 'A':
@@ -216,7 +217,7 @@ class FermenterView(BaseView):
 
             self.postTargetTemp(id, inactive.temp,inactive.start_temp,inactive.stop_temp)
 
-            print "fermenter_task"
+            #print "fermenter_task"
             cbpi.cache["fermenter_task"][id] = inactive
 
         cbpi.emit("UPDATE_FERMENTER", cbpi.cache.get(self.cache_key)[id])
@@ -247,7 +248,7 @@ class FermenterView(BaseView):
                     instance = cbpi.get_fermentation_controller(fermenter.logic).get("class")(**cfg)
                     instance.init()
                     fermenter.instance = instance
-                    print "auomatic run......"  #lcp
+                    #print "auomatic run......"  #lcp
                     def run(instance):
                         instance.run()
                         fermenter.state = not fermenter.state
@@ -288,30 +289,46 @@ class FermenterView(BaseView):
         cbpi.emit("UPDATE_FERMENTER", cbpi.cache.get(self.cache_key)[id])
 
     def check_step(self):
-        print "check_step..... "
         for key, value in cbpi.cache["fermenter_task"].iteritems():
             try:
                 fermenter = self.get_fermenter(key)
                 current_temp = cbpi.get_sensor_value(int(fermenter.sensor))
 
                 if value.timer_start is None:
-                    print "1 ....%s key %s  %s" % (fermenter.id,key,value.direction)
+                    sub = 0
+                    #print "1 ....%s key %s  %s" % (fermenter.id,key,value.direction)
                     if value.direction == "H" :
-
                         if current_temp >= value.temp:
-                            self.target_temp_reached(key,value)
+                            if fermenter.shake == 0 or fermenter.shake is None:
+                                fermenter.shake = fermenter.time()
+                            else :
+                                sub = time.time() - fermenter.shake
+                                if int(sub) > 4 :
+                                    self.target_temp_reached(key,value)
+                                    fermenter.shake = None
+                        elif fermenter.shake is not None:
+                            fermenter.shake = None
                     else:
                         if current_temp <= value.temp:
-                            self.target_temp_reached(key, value)
+                            if fermenter.shake == 0 or fermenter.shake is None:
+                                fermenter.shake = time.time()
+                            else:
+                                sub = time.time() - fermenter.shake
+                                if int(sub) > 4:
+                                    self.target_temp_reached(key, value)
+                                    fermenter.shake = None
+                        elif fermenter.shake is not  None:
+                            fermenter.shake = None
+
                 else:
-                    print "2 ....%s key %s  %s" % (fermenter.id,key,value.direction)
                     if time.time() >= value.timer_start:
+                        if fermenter.shake is not None:
+                            fermenter.shake = None
                         self.start_fermentation(key)
                     else:
                         pass
             except Exception as e:
                 pass
-        print "exit check_step..."
 
 
 @cbpi.backgroundtask(key="read_target_temps_fermenter", interval=5)
