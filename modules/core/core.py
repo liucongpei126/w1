@@ -148,12 +148,15 @@ class SensorAPI(object):
         self.save_to_file(id, value)
 
     def save_to_file(self, id, value, prefix="sensor"):
-        filename = "./logs/%s_%s.log" % (prefix, str(id))
-        formatted_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
-        msg = str(formatted_time) + "," +str(value) + "\n"
+        st = localtime()
+        stt = int(st) / 5  #
+        if stt % 36 == 0:
+            filename = "./logs/%s_%s.log" % (prefix, str(id))
+            formatted_time = strftime("%Y-%m-%d %H:%M:%S", st)
+            msg = str(formatted_time) + "," +str(value) + "\n"
 
-        with open(filename, "a") as file:
-            file.write(msg)
+            with open(filename, "a") as file:
+                file.write(msg)
 
     def log_action(self, text):
         filename = "./logs/action.log"
