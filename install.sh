@@ -45,7 +45,9 @@ show_menu () {
            if [ $? = 0 ]; then
              #apt-get -y update; apt-get -y upgrade;
              echo '# CraftBeerPi 1-wire support' >> "/boot/config.txt"
-             echo 'dtoverlay=w1-gpio,gpiopin=4,pullup=on' >> "/boot/config.txt"
+             echo 'dtoverlay=w1-gpio,gpiopin=17,pullup=on' >> "/boot/config.txt"
+             echo 'dtoverlay=w1-gpio,gpiopin=22,pullup=on' >> "/boot/config.txt"
+             echo 'dtoverlay=w1-gpio,gpiopin=27,pullup=on' >> "/boot/config.txt"
 
            fi
 

@@ -30,7 +30,7 @@ class Hysteresis(FermenterController):
             #print "temp2..... " + str(temp2)
             flag = 0
             if start_temp is not None and temp2 is not None:
-                if temp2 <= start_temp:
+                if start_temp >= temp2:
                     flag = 1
             else :
                 flag = 1
@@ -39,7 +39,7 @@ class Hysteresis(FermenterController):
                 self.heater_on(100)
             elif temp + float(self.heater_offset_max) >= target_temp:
                 self.heater_off()
-            elif stop_temp is not None and temp2 is not None and stop_temp >= temp2:
+            elif stop_temp is not None and temp2 is not None and stop_temp <= temp2:
                 self.heater_off()
 
 
