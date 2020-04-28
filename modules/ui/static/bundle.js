@@ -11850,6 +11850,12 @@ function(e, t, n) {
 					}
 				},
 				{
+					label: "Pump",
+					action: function() {
+						e.context.router.history.push("/app/chart/pump/" + n.id)
+					}
+				},
+				{
 					label: "Set Target Temperature",
 					action: function() {
 						e.refs.target_temp.wrappedInstance.show({
@@ -22906,6 +22912,12 @@ function(e, t, n) {
 					}
 				},
 				{
+					label: "Action Chart",
+					action: function() {
+						e.context.router.history.push("/app/chart/as/" + n.id)
+					}
+				},
+				{
 					label: "Target Temperature",
 					action: function() {
 						e.refs.target_temp.wrappedInstance.show({
@@ -24786,6 +24798,12 @@ function(e, t, n) {
 						action: function() {
 							e.context.router.history.push("/app/chart/s/" + n.id)
 						}
+					},
+					{
+                        label: "Action Chart",
+                        action: function() {
+                            e.context.router.history.push("/app/chart/as/" + n.id)
+                        }
 					}].concat(o(i.actions.map(function(t, r) {
 						return {
 							label: t.label,

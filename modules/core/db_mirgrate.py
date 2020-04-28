@@ -46,7 +46,7 @@ def init(app=None):
                 execute_file("craftbeerpi.db","./update",current_version, d)
 
 
-        conn2 = sqlite3.connect("sensor_log.db")
+        conn2 = sqlite3.connect("lcp_log.db")
         cur2 = conn2.cursor()
         current_version2 = None
         try:
@@ -60,4 +60,4 @@ def init(app=None):
             if filename.endswith(".sql"):
                 d = {"version": int(filename[:filename.index('_')]), "file": filename}
                 result2.append(d)
-                execute_file("sensor_log.db", "./update_log", current_version2, d)
+                execute_file("lcp_log.db", "./update_log", current_version2, d)

@@ -18,8 +18,12 @@ class Hysteresis(FermenterController):
         self.cooler_off()
 
     def run(self):
+        count = 0
+        status = 0
+        pre_status = 0
         #print "running......"
         while self.is_running():
+            count = count + 1
             #print "running...... " + self.__class__.__name__
             target_temp = self.get_target_temp()
             start_temp = self.get_start_temp()
@@ -30,22 +34,43 @@ class Hysteresis(FermenterController):
             #print "temp2..... " + str(temp2)
             flag = 0
             if start_temp is not None and temp2 is not None:
-                if temp2 <= start_temp:
+                if start_temp >= temp2:
                     flag = 1
             else :
                 flag = 1
 
             if flag == 1 and temp + float(self.heater_offset_min) <= target_temp:
                 self.heater_on(100)
+                status = 1
             elif temp + float(self.heater_offset_max) >= target_temp:
                 self.heater_off()
-            elif stop_temp is not None and temp2 is not None and stop_temp >= temp2:
+                status = 0
+            elif stop_temp is not None and temp2 is not None and stop_temp <= temp2:
                 self.heater_off()
+                status = 0
 
 
             if temp >= target_temp + float(self.cooler_offset_min):
                 self.cooler_on(100)
             elif temp <= target_temp + float(self.cooler_offset_max):
                 self.cooler_off()
+
+            if 0==count%15 or pre_status != status :
+                try:
+                    with sqlite3.connect("lcp_log.db") as conn:
+                        c = conn.cursor()
+                        pre_status = status
+                        sql = "insert into tbfsensor_log(nTime,nFermenterID,nStatus,nCur_Tem,nTarget_Tem) values(datetime('now','localtime'),%d,%d,%.2f,%.2f)"%(self.fermenter_id,status,self.get_temp(),self.get_target_temp())
+                        #print sql
+                        c.execute(sql)
+
+                        if 0==count%(15*128):
+                            sql = "delete from tbfsensor_log where nTime < datetime('now','localtime','start of day','-8 day');"
+                            c.execute(sql)
+                        conn.commit()
+                        conn.close()
+
+                except :
+                    pass
 
             self.sleep(1)

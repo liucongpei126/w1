@@ -44,7 +44,7 @@ class Hysteresis(KettleController):
 
             if 0==count%15 or pre_status != status :
                 try:
-                    with sqlite3.connect("sensor_log.db") as conn:
+                    with sqlite3.connect("lcp_log.db") as conn:
                         c = conn.cursor()
                         pre_status = status
                         sql = "insert into tbksensor_log(nTime,nKettleID,nStatus,nCur_Tem,nTarget_Tem) values(datetime('now','localtime'),%d,%d,%.2f,%.2f)"%(self.kettle_id,status,self.get_temp(),self.get_target_temp())

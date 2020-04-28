@@ -72,7 +72,7 @@ class LogView(FlaskView):
     def get_kettle_action_log(self, kid):
         sql = "select nTime,nTarget_Tem,nCur_Tem,nStatus from tbksensor_log where nKettleID={k_id};".format(k_id=kid)
         #print sql
-        conn = sqlite3.connect("sensor_log.db")
+        conn = sqlite3.connect("lcp_log.db")
         cursor = conn.execute(sql)
         array1 = []
         array2 = []
@@ -91,6 +91,50 @@ class LogView(FlaskView):
         ret.append(a1)
         ret.append(a2)
         ret.append(a3)
+        return ret
+
+    def get_fermenter_action_log(self, fid):
+        sql = "select nTime,nTarget_Tem,nCur_Tem,nStatus from tbfsensor_log where nFermenterID={fid};".format(fid=fid)
+        #print sql
+        conn = sqlite3.connect("lcp_log.db")
+        cursor = conn.execute(sql)
+        array1 = []
+        array2 = []
+        array3 = []
+        for row in cursor:
+            array1.append([int((datetime.datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S") - datetime.datetime(1970, 1, 1)).total_seconds()) * 1000, float(row[1])])
+            array2.append([int((datetime.datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S") - datetime.datetime(1970, 1, 1)).total_seconds()) * 1000, float(row[2])])
+            array3.append([int((datetime.datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S") - datetime.datetime(1970, 1, 1)).total_seconds()) * 1000, float(row[3])])
+
+        conn.close()
+        a1 = {"name": "Target Temp", "data":array1}
+        a2 = {"name": "Cur Temp", "data": array2}
+        a3 = {"name": "Act Status", "data": array3}
+
+        ret = []
+        ret.append(a1)
+        ret.append(a2)
+        ret.append(a3)
+        return ret
+
+    def get_mygpio_action_log(self, ioid):
+        sql = "select nTime,nStatus from tbmygpio_log where nIO={ioid};".format(ioid=ioid)
+        #print sql
+        conn = sqlite3.connect("lcp_log.db")
+        cursor = conn.execute(sql)
+        array1 = []
+        for row in cursor:
+            array1.append([int((datetime.datetime.strptime(row[0], "%Y-%m-%d %H:%M:%S") - datetime.datetime(1970, 1, 1)).total_seconds()) * 1000, float(row[1])])
+
+
+        conn.close()
+        #print "test......"
+
+        a1 = {"name": "Act Status", "data": array1}
+
+        ret = []
+        ret.append(a1)
+        #print ret
         return ret
 
     @route('/<t>/<int:id>', methods=["POST"])
@@ -115,7 +159,16 @@ class LogView(FlaskView):
             #kettle = cbpi.cache.get("kettle").get(id)
             #result = map(self.convert_chart_data_to_json, cbpi.get_controller(kettle.logic).get("class").chart(kettle))
             #print result
+
+        if t == "as":
+            result = self.get_fermenter_action_log(id)
+
+        if t == "pump":
+            result = self.get_mygpio_action_log(21)
+
         return json.dumps(result)
+
+
 
     @route('/download/<file>')
     @cbpi.nocache

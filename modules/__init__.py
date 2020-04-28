@@ -22,6 +22,7 @@ def index():
 # by modules and controllers
 
 
+import modules.mymodule
 import modules.steps
 import modules.config
 import modules.logs

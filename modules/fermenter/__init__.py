@@ -212,7 +212,15 @@ class FermenterView(BaseView):
 
             inactive.state = 'A'
             inactive.start = time.time()
-            inactive.direction = "C" if current_temp >= inactive.temp else "H"
+
+            if fermenter.cooler != '' and  fermenter.heater != '':
+                inactive.direction = "C" if current_temp >= inactive.temp else "H"
+            elif fermenter.heater != '':
+                inactive.direction = "H"
+            elif fermenter.cooler != '':
+                inactive.direction = "C"
+            else:
+                inactive.direction = "C" if current_temp >= inactive.temp else "H"
             FermenterStep.update(**inactive.__dict__)
 
             self.postTargetTemp(id, inactive.temp,inactive.start_temp,inactive.stop_temp)
@@ -295,7 +303,6 @@ class FermenterView(BaseView):
                 current_temp = cbpi.get_sensor_value(int(fermenter.sensor))
 
                 if value.timer_start is None:
-                    sub = 0
                     #print "1 ....%s key %s  %s" % (fermenter.id,key,value.direction)
                     if value.direction == "H" :
                         if current_temp >= value.temp:
