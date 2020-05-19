@@ -1,6 +1,7 @@
 from modules import cbpi
 from modules.core.controller import KettleController, FermenterController
 from modules.core.props import Property
+import sqlite3
 
 
 @cbpi.fermentation_controller
@@ -55,7 +56,7 @@ class Hysteresis(FermenterController):
             elif temp <= target_temp + float(self.cooler_offset_max):
                 self.cooler_off()
 
-            if 0==count%15 or pre_status != status :
+            if 0==count%1800 or pre_status != status :
                 try:
                     with sqlite3.connect("lcp_log.db") as conn:
                         c = conn.cursor()
@@ -65,7 +66,7 @@ class Hysteresis(FermenterController):
                         c.execute(sql)
 
                         if 0==count%(15*128):
-                            sql = "delete from tbfsensor_log where nTime < datetime('now','localtime','start of day','-8 day');"
+                            sql = "delete from tbfsensor_log where nTime < datetime('now','localtime','start of day','-3 day');"
                             c.execute(sql)
                         conn.commit()
                         conn.close()

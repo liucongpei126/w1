@@ -2,6 +2,7 @@
 
 from modules import socketio, app, cbpi
 from modules.mymodule import MyIoAct as IoAct
+from modules.mymodule import MachineMsg
 import thread
 
 try:
@@ -24,6 +25,10 @@ try:
   print "start my io thread......2"
 except:
   print "Error: unable to start thread my_io_act_start"
+
+
+MachineMsg.Push_Msg()
+
 
 
 socketio.run(app, host='0.0.0.0', port=port)
